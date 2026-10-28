@@ -1,0 +1,24 @@
+name: Build snake
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build snake
+        run: |
+          g++ snake_termux.cpp -o snake -std=c++17 -O2 -Wall
+          chmod +x snake
+          ls -l snake
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: snake-linux-x86_64
+          path: snake
