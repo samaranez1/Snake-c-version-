@@ -1,0 +1,31 @@
+name: Build snake for Android (Termux)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26d
+
+      - name: Build snake for ARM64 Android
+        run: |
+          CXX="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android24-clang++"
+          "$CXX" snake_termux.cpp -o snake-android -std=c++17 -O2 -Wall -static-libstdc++
+          chmod +x snake-android
+          ls -l snake-android
+          file snake-android
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: snake-android-aarch64
+          path: snake-android
